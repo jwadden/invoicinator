@@ -2,6 +2,8 @@ import models
 
 import settings
 
+import datetime
+
 from PyQt5.QtWidgets import *
  
 class Form(QWidget):
@@ -10,8 +12,8 @@ class Form(QWidget):
         
         dateLabel = QLabel("Date")
         self.dateLine = QCalendarWidget()
-        caseLabel = QLabel("Case:")
-        self.caseLine = QLineEdit()
+        taskLabel = QLabel("Task:")
+        self.taskLine = QLineEdit()
         startLabel = QLabel("Start:")
         self.startLine = QTimeEdit()
         endLabel = QLabel("End:")
@@ -21,12 +23,12 @@ class Form(QWidget):
         buttonLayout1 = QVBoxLayout()
         buttonLayout1.addWidget(dateLabel)
         buttonLayout1.addWidget(self.dateLine)
-        buttonLayout1.addWidget(caseLabel)
-        buttonLayout1.addWidget(self.caseLine)
+        buttonLayout1.addWidget(taskLabel)
+        buttonLayout1.addWidget(self.taskLine)
         buttonLayout1.addWidget(startLabel)
-        buttonLayout1.addWidget(self.endLine)
-        buttonLayout1.addWidget(endLabel)
         buttonLayout1.addWidget(self.startLine)
+        buttonLayout1.addWidget(endLabel)
+        buttonLayout1.addWidget(self.endLine)
         buttonLayout1.addWidget(self.submitButton)
  
         self.submitButton.clicked.connect(self.submitContact)
@@ -39,11 +41,32 @@ class Form(QWidget):
         self.setWindowTitle("Hello Qt")
  
     def submitContact(self):
-        date = self.dateLine.selectedDate().toPyDate()
-        case = self.caseLine.text()
+        task = self.taskLine.text()
+        start_time = datetime.datetime.combine(
+            self.dateLine.selectedDate().toPyDate(),
+            self.startLine.time().toPyTime()
+        )
         
-        QMessageBox.information(self, "Success!",
-                                    "%s!" % str(date))
+        end_time = datetime.datetime.combine(
+            self.dateLine.selectedDate().toPyDate(),
+            self.endLine.time().toPyTime()
+        )
+        
+        task_row = session.query(models.Task).filter(models.Task.name==self.taskLine.text()).first()
+        
+        if not task_row:
+            task_row = models.Task(name=self.taskLine.text())
+            
+            session.add(task_row)
+            
+            session.commit()
+            
+        work_log = models.WorkLog(task_id=task_row.id, start_time=start_time, end_time=end_time)
+        
+        session.add(work_log)
+        
+        session.commit()
+        #QMessageBox.information(self, "Success!", "%s!" % str(start_time))
  
 if __name__ == '__main__':
     import sys
@@ -52,5 +75,7 @@ if __name__ == '__main__':
  
     screen = Form()
     screen.show()
+    
+    session = models.Session()
  
     sys.exit(app.exec_())

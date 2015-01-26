@@ -9,21 +9,21 @@ Session = sqlalchemy.orm.sessionmaker(bind=engine)
 
 Base = sqlalchemy.ext.declarative.declarative_base()
 
-class Case(Base):
-    __tablename__ = 'case'
+class Task(Base):
+    __tablename__ = 'task'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     name = sqlalchemy.Column(sqlalchemy.Unicode(255))
     
     def __repr__(self):
-        return "<Case(title='%s')>" % (self.name)
+        return "<Task(title='%s')>" % (self.name)
         
 class WorkLog(Base):
-    __tablename__ = 'item'
+    __tablename__ = 'work_log'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    case_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('case.id'))
-    start_date = sqlalchemy.Column(sqlalchemy.DateTime(timezone=True), nullable=True)
-    end_date = sqlalchemy.Column(sqlalchemy.DateTime(timezone=True), nullable=True)
+    task_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('task.id'))
+    start_time = sqlalchemy.Column(sqlalchemy.DateTime(timezone=True), nullable=True)
+    end_time = sqlalchemy.Column(sqlalchemy.DateTime(timezone=True), nullable=True)
 
     def __repr__(self):
-        return "<WorkLog(case='%d', start='%s', end='%s')>" % (self.case_id, str(self.start_date), str(self.end_date))
+        return "<WorkLog(task='%d', start='%s', end='%s')>" % (self.task_id, str(self.start_date), str(self.end_date))
 
