@@ -68,7 +68,7 @@ stylesheet.add(
     )
 )
 
-address_frame = platypus.Frame(0, page_height - 4 * units.cm, 10 * units.cm, 4 * units.cm, id='address_frame')
+address_frame = platypus.Frame(0.5 * units.cm, page_height - 4.5 * units.cm, 10 * units.cm, 4 * units.cm, id='address_frame')
 address = [
     platypus.Paragraph('<strong>%s</strong>' % settings.name, stylesheet["Normal"]),
 ]
@@ -82,7 +82,7 @@ address.append(platypus.Paragraph(settings.email, stylesheet["Normal"]))
 
 address_frame.addFromList(address, canvas)
 
-info_frame = platypus.Frame(page_width - 10 * units.cm, page_height - 4 * units.cm, 10 * units.cm, 4 * units.cm, id='info_frame')
+info_frame = platypus.Frame(page_width - 10.5 * units.cm, page_height - 4.5 * units.cm, 10 * units.cm, 4 * units.cm, id='info_frame')
 info = [
     platypus.Paragraph('<strong>INVOICE</strong>', stylesheet["AlignRightHeading"]),
     platypus.Spacer(0, 0.5 * units.cm),
@@ -94,11 +94,13 @@ info = [
 
 info_frame.addFromList(info, canvas)
 
-note_frame = platypus.Frame(3 * units.cm, page_height - 7.5 * units.cm, 15 * units.cm, 3 * units.cm, id='note_frame')
+note_frame = platypus.Frame(3 * units.cm, page_height - 9 * units.cm, 15 * units.cm, 4 * units.cm, id='note_frame')
 note = []
 for note_line in settings.note.split('\n'):
     if len(note_line.strip()) > 0:
         note.append(platypus.Paragraph(note_line.strip(), stylesheet['Justify']))
+    else:
+        note.append(platypus.Spacer(0, 0.25 * units.cm))
         
 note_frame.addFromList(note, canvas)
 
@@ -138,18 +140,18 @@ hours_table = platypus.Table(hours_data, colWidths=column_widths)
 hours_table.setStyle(
     platypus.TableStyle(
         [
-            ('BACKGROUND',(0,0),(-1,0),colors.grey),
+            ('BACKGROUND',(0,0),(-1,0),colors.lightgrey),
             ('TEXTCOLOR',(-1,1),(-1,-1),colors.green)
         ]
     )
 )
 
 table_width, table_height = hours_table.wrapOn(canvas, 0, 0)
-hours_table.drawOn(canvas, 1.8 * units.cm, page_height - table_height - 8 * units.cm)
+hours_table.drawOn(canvas, 1.8 * units.cm, page_height - table_height - 9.5 * units.cm)
 
 total_frame = platypus.Frame(
     1.8 * units.cm,
-    page_height - table_height - 9 * units.cm,
+    page_height - table_height - 10.5 * units.cm,
     15 * units.cm, 1 * units.cm,
     id='total_frame'
 )
