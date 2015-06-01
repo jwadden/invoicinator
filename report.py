@@ -7,8 +7,11 @@ from isoweek import Week
 from reportlab.lib import pagesizes, styles, enums, units, colors
 from reportlab.pdfgen import canvas
 from reportlab import platypus
+from sqlalchemy import and_
 
 import settings
+
+from functions import get_hours
 
 option_parser = OptionParser()
 option_parser.add_option(
@@ -35,6 +38,8 @@ except AttributeError:
     date = date.today()
 
 week = Week.withdate(date)
+start_date = week.monday()
+end_date = (week + 1).monday()
 
 if options.filename is None:
     filename = 'invoice-%s.pdf' % week.sunday()
@@ -97,22 +102,34 @@ for note_line in settings.note.split('\n'):
         
 note_frame.addFromList(note, canvas)
 
-hours_header = [
+hours_dict = get_hours(start_date, end_date)
+
+hours_header = (
     platypus.Paragraph('<strong>#</strong>', stylesheet['Normal']),
     platypus.Paragraph('<strong>Task</strong>', stylesheet['Normal']),
     platypus.Paragraph('<strong>Hours</strong>', stylesheet['Normal']),
     platypus.Paragraph('<strong>Rate</strong>', stylesheet['Normal']),
     platypus.Paragraph('<strong>Total</strong>', stylesheet['Normal']),
-]
+)
 
 hours_data = [
-    hours_header,
-    [1, 'asdf', 2.5, settings.rate, 87.5],
-    [2, 'ghjk', 1, settings.rate, 35],
-    [3, 'zxcv', 3, settings.rate, 105],
+    hours_header
 ]
 
-invoice_total = 42.75
+invoice_total = 0.0
+task_counter = 0
+
+for task in sorted(hours_dict.keys()):
+    hours_data.append((
+        task_counter + 1,
+        task,
+        hours_dict[task],
+        settings.rate,
+        '$%.2f' % (hours_dict[task] * settings.rate),
+    ))
+    
+    invoice_total += (hours_dict[task] * settings.rate)
+    task_counter += 1
 
 column_widths = (2 * units.cm, 10 * units.cm, 2 * units.cm, 2 * units.cm, 2 * units.cm)
 
