@@ -1,4 +1,4 @@
-Copyright (c) 2015, jwadden
+Copyright (c) 2015, Jeff Wadden
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
