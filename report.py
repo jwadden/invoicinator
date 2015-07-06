@@ -7,7 +7,6 @@ from isoweek import Week
 from reportlab.lib import pagesizes, styles, enums, units, colors
 from reportlab.pdfgen import canvas
 from reportlab import platypus
-from sqlalchemy import and_
 
 import settings
 

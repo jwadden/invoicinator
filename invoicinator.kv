@@ -1,6 +1,8 @@
 #:kivy 1.9.0
 
-<HoursInput>:
+<Invoicinator>:
+    hours_display: hours_display_widget
+
     BoxLayout:
         id: submit_line
         orientation: 'horizontal'
@@ -11,6 +13,7 @@
             text: 'Submit'
     
     BoxLayout:
+        id: hours_input
         orientation: 'vertical'
         pos: 0, submit_line.height
         size: root.width * 0.6, root.height - submit_line.height
@@ -50,3 +53,19 @@
                 text: 'Case Name'
             TextInput:
                 id: case_name
+        
+    BoxLayout:
+        id: hours_display_widget
+        orientation: 'vertical'
+        pos: hours_input.width, submit_line.height
+        size: root.width - hours_input.width, root.height - submit_line.height
+
+<HoursEntry>:
+    orientation: 'horizontal'
+    pos: 0, 0
+    size: root.width, root.height
+    
+    Label:
+        text: root.case_name_display
+    Label:
+        text: root.num_hours_display
