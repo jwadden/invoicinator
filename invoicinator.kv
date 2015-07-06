@@ -1,0 +1,52 @@
+#:kivy 1.9.0
+
+<HoursInput>:
+    BoxLayout:
+        id: submit_line
+        orientation: 'horizontal'
+        pos: 0, 0
+        size: root.width, root.height * 0.1
+        
+        Button:
+            text: 'Submit'
+    
+    BoxLayout:
+        orientation: 'vertical'
+        pos: 0, submit_line.height
+        size: root.width * 0.6, root.height - submit_line.height
+        
+        BoxLayout:
+            orientation: 'horizontal'
+            
+            Label:
+                text: 'Start Date'
+            TextInput:
+                id: start_date
+        BoxLayout:
+            orientation: 'horizontal'
+            
+            Label:
+                text: 'Start Time'
+            TextInput:
+                id: start_time
+        BoxLayout:
+            orientation: 'horizontal'
+            
+            Label:
+                text: 'End Date'
+            TextInput:
+                id: end_date
+        BoxLayout:
+            orientation: 'horizontal'
+            
+            Label:
+                text: 'End Time'
+            TextInput:
+                id: end_time
+        BoxLayout:
+            orientation: 'horizontal'
+            
+            Label:
+                text: 'Case Name'
+            TextInput:
+                id: case_name
