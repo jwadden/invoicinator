@@ -42,12 +42,23 @@ class Form(QWidget):
  
     def submitContact(self):
         task = self.taskLine.text()
-        start_time = datetime.datetime.combine(
+        selected_date = self.dateLine.selectedDate().toPyDate()
+        start_time = self.startLine.time().toPyTime()
+        end_time = self.endLine.time().toPyTime()
+        
+        start_date = selected_date
+        
+        if end_time.hour == 0 and end_time.minute == 0:
+            end_date = selected_date + datetime.timedelta(1)
+        else:
+            end_date = selected_date
+        
+        start_datetime = datetime.datetime.combine(
             self.dateLine.selectedDate().toPyDate(),
             self.startLine.time().toPyTime()
         )
         
-        end_time = datetime.datetime.combine(
+        end_datetime = datetime.datetime.combine(
             self.dateLine.selectedDate().toPyDate(),
             self.endLine.time().toPyTime()
         )
@@ -61,7 +72,7 @@ class Form(QWidget):
             
             session.commit()
             
-        work_log = models.WorkLog(task_id=task_row.id, start_time=start_time, end_time=end_time)
+        work_log = models.WorkLog(task_id=task_row.id, start_time=start_datetime, end_time=end_datetime)
         
         session.add(work_log)
         
