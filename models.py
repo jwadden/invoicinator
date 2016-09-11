@@ -2,12 +2,16 @@ import sqlalchemy
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
 
-import settings
-
-engine = sqlalchemy.create_engine(settings.db_engine, echo=settings.debug)
-Session = sqlalchemy.orm.sessionmaker(bind=engine)
+engine = None
+Session = None
 
 Base = sqlalchemy.ext.declarative.declarative_base()
+
+def init_engine(settings_dict):
+    global engine
+    global Session
+    engine = sqlalchemy.create_engine(settings_dict['db_engine'], echo=settings_dict['debug'])
+    Session = sqlalchemy.orm.sessionmaker(bind=engine)
 
 class Task(Base):
     __tablename__ = 'task'
