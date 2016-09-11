@@ -4,6 +4,9 @@ import datetime
 
 from sqlalchemy import and_
 
+def init_models(settings_dict):
+    models.init_engine(settings_dict)
+
 def get_hours(start_date, end_date):
     hours_dict = {}
 

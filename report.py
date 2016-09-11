@@ -10,7 +10,7 @@ from reportlab import platypus
 
 import settings
 
-from functions import get_hours
+from functions import get_hours, init_models
 
 option_parser = OptionParser()
 option_parser.add_option(
@@ -25,6 +25,13 @@ option_parser.add_option(
     dest="filename",
     help="Output file",
     metavar="FILE"
+)
+
+option_parser.add_option(
+    "-s", "--settings",
+    dest="settings",
+    help="Settings",
+    metavar="SETTINGS"
 )
 
 (options, args) = option_parser.parse_args()
@@ -44,6 +51,13 @@ if options.filename is None:
     filename = 'invoice-%s.pdf' % week.sunday()
 else:
     filename = options.filename
+
+try:
+    settings_dict = settings.config[options.settings]
+except:
+    settings_dict = settings.config[settings.default_config]
+
+init_models(settings_dict)
 
 canvas = canvas.Canvas(filename, pagesize=pagesizes.letter)
 page_width, page_height = pagesizes.letter
@@ -69,15 +83,15 @@ stylesheet.add(
 
 address_frame = platypus.Frame(0.5 * units.cm, page_height - 4.5 * units.cm, 10 * units.cm, 4 * units.cm, id='address_frame')
 address = [
-    platypus.Paragraph('<strong>%s</strong>' % settings.name, stylesheet["Normal"]),
+    platypus.Paragraph('<strong>%s</strong>' % settings_dict['name'], stylesheet["Normal"]),
 ]
-for part in settings.address_parts:
+for part in settings_dict['address_parts']:
     ptext = part.strip()
     address.append(platypus.Paragraph(ptext, stylesheet["Normal"]))
     
 address.append(platypus.Spacer(0, 0.5 * units.cm))
-address.append(platypus.Paragraph(settings.phone, stylesheet["Normal"]))
-address.append(platypus.Paragraph(settings.email, stylesheet["Normal"]))
+address.append(platypus.Paragraph(settings_dict['phone'], stylesheet["Normal"]))
+address.append(platypus.Paragraph(settings_dict['email'], stylesheet["Normal"]))
 
 address_frame.addFromList(address, canvas)
 
@@ -87,15 +101,15 @@ info = [
     platypus.Spacer(0, 0.5 * units.cm),
     platypus.Paragraph(week.sunday().strftime('%b %d, %Y'), stylesheet["AlignRight"]),
     platypus.Spacer(0, 0.5 * units.cm),
-    platypus.Paragraph('Att: %s' % settings.recipient_name, stylesheet["AlignRight"]),
-    platypus.Paragraph(settings.recipient_company, stylesheet["AlignRight"]),
+    platypus.Paragraph('Att: %s' % settings_dict['recipient_name'], stylesheet["AlignRight"]),
+    platypus.Paragraph(settings_dict['recipient_company'], stylesheet["AlignRight"]),
 ]
 
 info_frame.addFromList(info, canvas)
 
 note_frame = platypus.Frame(3 * units.cm, page_height - 9 * units.cm, 15 * units.cm, 4 * units.cm, id='note_frame')
 note = []
-for note_line in settings.note.split('\n'):
+for note_line in settings_dict['note'].split('\n'):
     if len(note_line.strip()) > 0:
         note.append(platypus.Paragraph(note_line.strip(), stylesheet['Justify']))
     else:
@@ -125,11 +139,11 @@ for task in sorted(hours_dict.keys()):
         task_counter + 1,
         task,
         hours_dict[task],
-        settings.rate,
-        '$%.2f' % (hours_dict[task] * settings.rate),
+        settings_dict['rate'],
+        '$%.2f' % (hours_dict[task] * settings_dict['rate']),
     ))
     
-    invoice_total += (hours_dict[task] * settings.rate)
+    invoice_total += (hours_dict[task] * settings_dict['rate'])
     task_counter += 1
 
 column_widths = (2 * units.cm, 10 * units.cm, 2 * units.cm, 2 * units.cm, 2 * units.cm)
