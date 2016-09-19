@@ -1,7 +1,9 @@
 import sqlalchemy
 import sqlalchemy.ext.declarative
+from optparse import OptionParser
 
 import models
+import settings
 
 option_parser = OptionParser()
 option_parser.add_option(
