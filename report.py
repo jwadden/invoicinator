@@ -47,15 +47,17 @@ week = Week.withdate(date)
 start_date = week.monday()
 end_date = (week + 1).monday()
 
+try:
+    contract_name = options.settings
+    settings_dict = settings.config[contract_name]
+except:
+    contract_name = settings.default_config
+    settings_dict = settings.config[contract_name]
+
 if options.filename is None:
-    filename = 'invoice-%s.pdf' % week.sunday()
+    filename = 'invoice-%s-%s.pdf' % (contract_name, week.sunday())
 else:
     filename = options.filename
-
-try:
-    settings_dict = settings.config[options.settings]
-except:
-    settings_dict = settings.config[settings.default_config]
 
 init_models(settings_dict)
 
